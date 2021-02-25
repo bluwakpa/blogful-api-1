@@ -1,0 +1,3 @@
+TRUNCATE blogful_comments 
+
+RESTART IDENTITY CASCADE
