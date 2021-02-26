@@ -1,3 +1,0 @@
-TRUNCATE blogful_users
-
-RESTART IDENTITY CASCADE
