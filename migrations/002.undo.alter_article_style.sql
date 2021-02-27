@@ -1,4 +1,9 @@
-ALTER TABLE blogful_articles
-  DROP COLUMN author;
+ALTER TABLE blogful_articles 
+  DROP COLUMN IF EXISTS topic;
 
-DROP TABLE IF EXISTS blogful_users;
+DROP TYPE IF EXISTS article_category;
+
+-- ALTER TABLE blogful_articles
+--   DROP COLUMN author;
+
+-- DROP TABLE IF EXISTS blogful_users;

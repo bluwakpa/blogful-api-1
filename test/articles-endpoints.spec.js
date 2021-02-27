@@ -5,22 +5,27 @@ const { makeUsersArray } = require('./users.fixtures')
 
 describe('Articles Endpoints', function() {
   let db
+  const cleanup = () => db.raw(
+    `TRUNCATE
+      blogful_articles,
+      blogful_users,
+      blogful_comments
+    RESTART IDENTITY CASCADE`
+  )
 
   before('make knex instance', () => {
-
     db = knex({
       client: 'pg',
       connection: process.env.TEST_DB_URL,
     })
     app.set('db', db)
-
   })
 
   after('disconnect from db', () => db.destroy())
 
-  before('clean the table', () => db.raw('TRUNCATE blogful_articles, blogful_users, blogful_comments RESTART IDENTITY CASCADE'))
+  before('cleanup', () => cleanup())
 
-  afterEach('cleanup',() => db.raw('TRUNCATE blogful_articles, blogful_users, blogful_comments RESTART IDENTITY CASCADE'))
+  afterEach('cleanup', () => cleanup())
 
   describe(`GET /api/articles`, () => {
     context(`Given no articles`, () => {
@@ -165,8 +170,8 @@ describe('Articles Endpoints', function() {
           expect(res.body.content).to.eql(newArticle.content)
           expect(res.body).to.have.property('id')
           expect(res.headers.location).to.eql(`/api/articles/${res.body.id}`)
-          const expected = new Intl.DateTimeFormat('en-US').format(new Date())
-          const actual = new Intl.DateTimeFormat('en-US').format(new Date(res.body.date_published))
+          const expected = new Date().toLocaleString()
+          const actual = new Date(res.body.date_published).toLocaleString()
           expect(actual).to.eql(expected)
         })
         .then(res =>
@@ -304,7 +309,7 @@ describe('Articles Endpoints', function() {
           .send({ irrelevantField: 'foo' })
           .expect(400, {
             error: {
-              message: `Request body must contain either 'title', 'style' or 'content'`
+              message: `Request body must content either 'title', 'style' or 'content'`
             }
           })
       })
